@@ -108,9 +108,8 @@ domain-monitor
 ```
 
 3. Sample:
-```
+
 ![image](https://github.com/user-attachments/assets/a660fe80-9953-4600-abe5-cb6a185788b0)
-```
 
 ## 🤝 Contributing
 
