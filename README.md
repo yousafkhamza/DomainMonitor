@@ -107,6 +107,9 @@ domain-monitor
 # Prompt: Duration = 30m
 ```
 
+3. Sample:
+![image](https://github.com/user-attachments/assets/a660fe80-9953-4600-abe5-cb6a185788b0)
+
 ## 🤝 Contributing
 
 1. Fork the repository
