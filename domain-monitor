@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# Author: Yousaf
+# Date: 2024
+# Description: its a domain monitoring script
+
+# ANSI color codes
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Function to display attractive prompt
+prompt_with_style() {
+    local message="$1"
+    local color="$2"
+    printf "${color}➜ ${message}${NC} "
+}
+
+# Clear screen and show header
+clear
+echo -e "${BLUE}🌐 Domain Monitor Tool by Yousaf${NC}"
+echo -e "${YELLOW}------------------------${NC}"
+
+# Prompt for the website URL with validation
+while true; do
+    prompt_with_style "Enter the website URL to monitor (e.g., https://example.com):" "${GREEN}"
+    read URL
+    
+    # Basic URL validation
+    if [[ "$URL" =~ ^https?:// ]]; then
+        break
+    else
+        echo -e "${RED}❌ Invalid URL. Please include http:// or https://${NC}"
+    fi
+done
+
+# Prompt for the interval with validation
+while true; do
+    prompt_with_style "Enter monitoring interval (min 10 seconds):" "${GREEN}"
+    read INTERVAL
+    
+    if [[ "$INTERVAL" =~ ^[0-9]+$ ]] && [ "$INTERVAL" -ge 10 ]; then
+        break
+    else
+        echo -e "${RED}❌ Invalid interval. Must be a number 10 or greater.${NC}"
+    fi
+done
+
+# Prompt for duration with support for hours and minutes
+while true; do
+    prompt_with_style "Enter monitoring duration (e.g., 2h, 30m):" "${GREEN}"
+    read DURATION_INPUT
+    
+    # Extract number and unit
+    if [[ "$DURATION_INPUT" =~ ^([0-9]+)([hm])$ ]]; then
+        DURATION_VALUE="${BASH_REMATCH[1]}"
+        DURATION_UNIT="${BASH_REMATCH[2]}"
+        
+        # Convert to seconds
+        if [ "$DURATION_UNIT" == "h" ]; then
+            DURATION=$((DURATION_VALUE * 60 * 60))
+        else
+            DURATION=$((DURATION_VALUE * 60))
+        fi
+        
+        break
+    else
+        echo -e "${RED}❌ Invalid duration. Use format like 2h or 30m.${NC}"
+    fi
+done
+
+# Log file configuration
+LOG_FILE="website_status.log"
+
+# Create a backup of the previous log file with the current date and time
+if [ -f "$LOG_FILE" ]; then
+    BACKUP_LOG_FILE="${LOG_FILE}_backup_$(date "+%Y%m%d%H%M%S")"
+    mv "$LOG_FILE" "$BACKUP_LOG_FILE"
+    echo -e "${YELLOW}Previous log file backed up as $BACKUP_LOG_FILE${NC}"
+fi
+
+# Empty the log file at the start
+> "$LOG_FILE"
+
+# Monitoring loop
+echo -e "${BLUE}🔍 Starting domain monitoring...${NC}"
+echo -e "${YELLOW}Monitoring ${GREEN}$URL${YELLOW} every ${GREEN}$INTERVAL${YELLOW} seconds for ${GREEN}$DURATION_VALUE$DURATION_UNIT${NC}"
+
+end_time=$((SECONDS+DURATION))
+while [ $SECONDS -lt $end_time ]; do
+    STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" "$URL")
+    DATE=$(date "+%Y-%m-%d %H:%M:%S")
+    OUTPUT="$DATE - $URL - Status: $STATUS"
+    
+    if [ "$STATUS" -eq 200 ]; then
+        COLOR_OUTPUT="${GREEN}✓ $OUTPUT${NC}"  # Green for 200 status
+    else
+        COLOR_OUTPUT="${RED}✗ $OUTPUT${NC}"  # Red for non-200 status
+    fi
+    
+    echo -e "$COLOR_OUTPUT"
+    echo "$OUTPUT" >> "$LOG_FILE"
+    sleep "$INTERVAL"
+done
+
+echo -e "${BLUE}🏁 Domain monitoring completed.${NC}"
+echo -e "${YELLOW}Check $LOG_FILE for full monitoring details.${NC}"
