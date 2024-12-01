@@ -2,7 +2,7 @@
 
 ## Overview
 
-Domain Monitor is a simple, powerful Bash script that helps you monitor website status continuously. You can effortlessly track your website's uptime with an easy-to-use interface and flexible monitoring options.
+Domain Monitor is a simple, powerful Bash script that helps you monitor the status of websites continuously. With an easy-to-use interface and flexible monitoring options, you can keep track of your website's uptime effortlessly.
 
 ## ✨ Features
 
