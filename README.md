@@ -121,7 +121,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📧 Contact
 
-Your Name - yousaf.k.hamza@example.com
+Yousaf - yousaf.k.hamza@example.com
 
 Project Link: [https://github.com/yousafkhamza/DomainMonitor](https://github.com/yousafkhamza/DomainMonitor)
 
